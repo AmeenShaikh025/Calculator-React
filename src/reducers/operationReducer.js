@@ -4,6 +4,7 @@ import { evaluate } from "mathjs";
 export const KEYADD = "KEYADD";
 export const KEYACTION = "KEYACTION";
 export const KEYCLEAR = "KEYCLEAR";
+export const BACKKEY = "BACKKEY";
 
 //action creator
 
@@ -26,6 +27,12 @@ export const clearKey = () => {
   };
 };
 
+export const backKey = () => {
+  return {
+    type: BACKKEY
+  };
+};
+
 const initialState = {
   exp: ""
 };
@@ -37,7 +44,6 @@ export default function operationReducer(state = initialState, action) {
         exp: state.exp + action.payload
       };
     case KEYACTION:
-      //console.log(state.exp);
       if (state.exp) {
         return {
           exp: evaluate(state.exp)
@@ -45,10 +51,20 @@ export default function operationReducer(state = initialState, action) {
       } else {
         return state;
       }
-
     case KEYCLEAR:
       return {
         exp: ""
+      };
+    case BACKKEY:
+      let storeVal = Array.from(state.exp);
+      if (storeVal.length > -1) {
+        storeVal.splice(storeVal.length - 1, 1);
+      }
+      storeVal = String(storeVal)
+        .split(",")
+        .join("");
+      return {
+        exp: storeVal
       };
     default:
       return state;

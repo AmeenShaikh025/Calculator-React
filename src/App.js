@@ -8,8 +8,14 @@ import Keycomponent from "./components/Keycomponent";
 import Actioncomponent from "./components/Actioncomponent";
 import EqualComponent from "./components/EqualComponent";
 import Clearcomponent from "./components/Clearcomponent";
+import Backcomponent from "./components/Backcomponent";
 
-import { keyAdd, keyAction, clearKey } from "./reducers/operationReducer";
+import {
+  keyAdd,
+  keyAction,
+  clearKey,
+  backKey
+} from "./reducers/operationReducer";
 
 class App extends Component {
   //console.log(props.store);
@@ -23,16 +29,45 @@ class App extends Component {
   clearResult = () => {
     this.props.clearKey();
   };
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   console.log(nextProps.store);
-  //   if (!nextProps.store) {
-  //     return false;
-  //   }
-  //   return true;
-  // }
+  backKey = () => {
+    this.props.backKey();
+  };
+  enterKey = e => {
+    //To check for numbers
+    if (
+      (e.keyCode >= 48 && e.keyCode <= 57) ||
+      (e.which >= 48 && e.which <= 57) ||
+      (e.keyCode >= 96 && e.keyCode <= 105) ||
+      (e.which >= 96 && e.which <= 105) ||
+      // minus
+      e.key === "-" ||
+      //period
+      e.keyCode === 190 ||
+      e.which === 190 ||
+      //add
+      e.key === "+" ||
+      //multiply
+      e.keyCode === 56 ||
+      e.which === 56 ||
+      //divide
+      e.key === "/"
+    ) {
+      this.props.keyAdd(e.key);
+    }
+    if (e.key === "=" || e.keyCode === 13) {
+      this.props.keyAction();
+    }
+  };
+
+  componentDidMount() {
+    document.addEventListener("keydown", this.enterKey, false);
+  }
+  componentWillUnmount() {
+    document.removeEventListener("keydown", this.enterKey, false);
+  }
   render() {
     return (
-      <div className="App">
+      <div className="App" onKeyDown={this.enterKey}>
         <div className="row">
           <div className="output">{this.props.store}</div>
         </div>
@@ -73,6 +108,9 @@ class App extends Component {
           </Actioncomponent>
         </div>
         <div className="row">
+          <Backcomponent operand="operand" backKey={this.backKey}>
+            BACK
+          </Backcomponent>
           <Clearcomponent operand="operand" clearResult={this.clearResult}>
             C
           </Clearcomponent>
@@ -96,7 +134,8 @@ const mapDispatchToProps = dispatch => {
     {
       keyAdd,
       keyAction,
-      clearKey
+      clearKey,
+      backKey
     },
     dispatch
   );
