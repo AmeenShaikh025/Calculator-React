@@ -36,3 +36,8 @@ body {
 .App > div.row > div.operand {
   background-color: #ff8d00;
 }
+@media (max-width: 545px) {
+  .App {
+    width: 95%;
+  }
+}
